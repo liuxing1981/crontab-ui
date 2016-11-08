@@ -27,11 +27,6 @@ crontab = function(name, command, schedule, stopped, logging){
 	return data;
 };
 
-exports.create_new = function(name, command, schedule, logging){
-	var tab = crontab(name, command, schedule, false, logging);
-	tab.created = new Date().valueOf();
-	db.insert(tab);
-};
 
 exports.update = function(data){
 	db.update({_id: data._id}, crontab(data.name, data.command, data.schedule, null, data.logging));
@@ -41,9 +36,7 @@ exports.status = function(_id, stopped){
 	db.update({_id: _id},{$set: {stopped: stopped}});
 };
 
-exports.remove = function(_id){
-	db.remove({_id: _id}, {});
-};
+
 exports.crontabs = function(callback){
 	db.find({}).sort({ created: -1 }).exec(function(err, docs){
 		for(var i=0; i<docs.length; i++){
@@ -169,4 +162,23 @@ exports.import_crontab = function(){
 			}
 		});
 	});
+};
+
+exports.create_new = function(name, command, schedule, logging){
+	var tab = crontab(name, command, schedule, false, logging);
+	tab.created = new Date().valueOf();
+	db.insert(tab);
+	//create a new one and execute it
+	exports.set_crontab('', function(err) {
+		if (err) throw err;
+	});
+};
+
+exports.remove = function(_id){
+	db.remove({_id: _id}, {});
+	//remove after delete from db
+	exports.set_crontab('', function(err) {
+		if (err) throw err;
+	});
+
 };

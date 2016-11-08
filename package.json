@@ -17,7 +17,7 @@
     "moment": "latest"
   },
   "engines": {
-    "node": "latest"
+    "node": "v4.2.6"
   },
    "bin": {
      "crontab-ui": "bin/crontab-ui.js"

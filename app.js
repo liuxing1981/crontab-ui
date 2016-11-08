@@ -32,6 +32,11 @@ app.set('views', __dirname + '/views');
 //set port
 app.set('port', (process.env.PORT || 8000));
 
+crontab.reload_db();
+crontab.set_crontab('', function(err) {
+	if (err) next(err);
+});
+
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
 	crontab.reload_db();
@@ -146,6 +151,17 @@ app.get(routes.logger, function(req, res) {
 	else
 		res.end("No errors logged yet");
 });
+
+
+//add by figo
+app.post(routes.api_save, function(req, res) {
+    // new job
+    crontab.create_new(req.body.name, req.body.command, req.body.schedule, req.body.logging);
+    var statusCode = 200;
+    var data={message:"add success"};
+    res.status(statusCode).json(data);
+});
+
 
 // error handler
 app.use(function(err, req, res, next) {

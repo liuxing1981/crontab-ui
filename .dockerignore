@@ -1,0 +1,9 @@
+*.swp
+node_modules
+crontabs/*.db
+crontabs/logs/*.log
+*.iml
+.idea/
+.git/
+.gitignore
+
